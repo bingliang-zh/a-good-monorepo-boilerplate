@@ -12,5 +12,15 @@ This chapter describes how you can manually build a monorepo like this. You can 
 
 I'm using yarn@1.22.5.
 
+### Lerna
+
+```shell
+mkdir my-mono-repo
+cd my-mono-repo
+npx lerna init
+```
+
+Lerna's default mode 'Fixed/Locked mode' seems good to me. More custom settings, go to [here](https://github.com/lerna/lerna#getting-started).
+
 ### TODO
 
