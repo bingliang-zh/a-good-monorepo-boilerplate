@@ -4,7 +4,7 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Storybook](https://cdn.jsdelivr.net/gh/storybookjs/brand@master/badge/badge-storybook.svg)](https://github.com/storybookjs/storybook)
 
-A monorepo boilerplate with a good work-flow, featuring [typescript](https://github.com/microsoft/TypeScript), [lerna](https://github.com/lerna/lerna), [yarn workspace](https://classic.yarnpkg.com/en/docs/workspaces/), [create-react-app](https://github.com/facebook/create-react-app), [tsdx](https://github.com/formium/tsdx), [eslint](https://github.com/eslint/eslint), [prettier](https://github.com/prettier/prettier), [storybook](https://github.com/storybookjs/storybook), etc.
+A monorepo boilerplate with a good workflow, featuring [typescript](https://github.com/microsoft/TypeScript), [lerna](https://github.com/lerna/lerna), [yarn workspace](https://classic.yarnpkg.com/en/docs/workspaces/), [create-react-app](https://github.com/facebook/create-react-app), [tsdx](https://github.com/formium/tsdx), [eslint](https://github.com/eslint/eslint), [prettier](https://github.com/prettier/prettier), [storybook](https://github.com/storybookjs/storybook), etc.
 
 ## Build Process
 
@@ -60,7 +60,7 @@ After installation succeed, try `yarn start`, `yarn test`, `yarn storybook`(reac
 
 You can see in chapter "CRA (Create-React-App) & TSDX", all dependencies each package need are installed locally in ./packages/package-name/node_modules. And they just don't know the siblings exist (I mean they cannot refer to each other, for now).
 
-Here comes the "yarn workspace". It will significantly improve the development work-flow by doing some "magic".
+Here comes the "yarn workspace". It will significantly improve the development workflow by doing some "magic".
 
 Add `"npmClient": "yarn"` and `"useWorkspaces": true` to "lerna.json".
 
@@ -102,6 +102,98 @@ yarn
 ```
 
 After execution, a new "node_modules" folder showed up in root, and all packages' "node_modules"'s disk usage and sub folder numbers are both significantly reduced. Whole repo's disk usage reduced from about 930 MB to 600 MB.
+
+### yarn workspace cleanup & workflow
+
+Yarn workspace uses single root "yarn.lock" file. So remove all "yarn.lock" in packages.
+
+```shell
+# remove all "yarn.lock" in packages
+rm packages/**/yarn.lock
+```
+
+Create a ".gitignore" in root, add `node_modules` and `*/**/yarn.lock` to it.
+
+It should look like this.
+
+```text
+node_modules
+
+# yarn workspace only need root yarn.lock, ignore all yarn.lock(s) in subfolders
+*/**/yarn.lock
+```
+
+Now it's **Monorepo Workflow Demonstration** time.
+
+If you wanna do something to a package, for example 'lib-template-tsdx'. There are two ways with similar behavior.
+
+```shell
+# workspace way
+# current directory at repo's root
+yarn workspace lib-template-tsdx start
+```
+
+```shell
+# traditional way
+cd packages/lib-template-tsdx
+yarn start
+```
+
+Now I want to use "lib-template-tsdx" in "app-template-cra".
+
+```shell
+# ✅ Current version of lib-template-tsdx is 0.1.0, use that.
+yarn workspace app-template-cra add lib-template-tsdx@0.1.0
+```
+
+```shell
+# ❌ It will throw an error if no version specified.
+yarn workspace app-template-cra add lib-template-tsdx
+```
+
+After local dependency installed correctly, use "lib-template-tsdx" method in "app-template-cra" by editing "app-template-cra/src/App.tsx".
+
+It should look like this.
+
+```tsx
+// ...
+// the import added
+import { sum } from "lib-template-tsdx";
+
+function App() {
+  // the code added
+  const result = sum(1, 3);
+  
+  return //...
+}
+// ...
+```
+
+Run "app-template-cra".
+
+```shell
+yarn workspace app-template-cra start
+```
+
+Console has an output which is written in "lib-template-tsdx". It is working.
+
+But changing code in "lib-template-tsdx" won't update the running tab, webpack HMR (Hot Module Replacement) does not received any signals.
+
+We will need two terminals to make HMR working.
+
+```shell
+# terminal one
+yarn workspace lib-template-tsdx start
+```
+
+```shell
+# terminal two
+yarn workspace app-template-cra start
+```
+
+Now webpack HMR will get notified when "lib-template-tsdx"'s code changed (after "lib-template-tsdx"'s compilation completed).
+
+It works like a charm!
 
 ### TODO
 

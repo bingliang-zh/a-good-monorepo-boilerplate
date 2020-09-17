@@ -1,8 +1,10 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import { sum } from "lib-template-tsdx";
+import "./App.css";
 
 function App() {
+  const result = sum(1, 3);
   return (
     <div className="App">
       <header className="App-header">
