@@ -36,5 +36,25 @@ yarn start
 
 If nothing went wrong, you'll see a React App page. Try `yarn test` to see whether test is working.
 
+```shell
+# TSDX with template "basic"
+cd packages
+npx tsdx create lib-template-tsdx --template basic
+cd lib-template-tsdx
+yarn start
+```
+
+```shell
+# TSDX with template "react-with-storybook"
+cd packages
+npx tsdx create lib-template-tsdx-react-sb --template react-with-storybook
+cd lib-template-tsdx-react-sb
+yarn start
+```
+
+Tsdx offers three templates: basic, react, react-with-storybook. "Basic" is good for utility libraries, "react" & "react-with-storybook" is good for component libraries. You can skip the `--template` flag and select later.
+
+After installation succeed, try `yarn start`, `yarn test`, `yarn storybook`(react-with-storybook only) in these packages.
+
 ### TODO
 
