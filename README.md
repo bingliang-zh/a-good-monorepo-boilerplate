@@ -56,5 +56,52 @@ Tsdx offers three templates: basic, react, react-with-storybook. "Basic" is good
 
 After installation succeed, try `yarn start`, `yarn test`, `yarn storybook`(react-with-storybook only) in these packages.
 
+### yarn workspace
+
+You can see in chapter "CRA (Create-React-App) & TSDX", all dependencies each package need are installed locally in ./packages/package-name/node_modules. And they just don't know the siblings exist (I mean they cannot refer to each other, for now).
+
+Here comes the "yarn workspace". It will significantly improve the development work-flow by doing some "magic".
+
+Add `"npmClient": "yarn"` and `"useWorkspaces": true` to "lerna.json".
+
+Your "./lerna.json" should look like this.
+
+```json
+{
+  "packages": [
+    "packages/*"
+  ],
+  "version": "0.0.0",
+  "npmClient": "yarn",
+  "useWorkspaces": true
+}
+```
+
+Add `"workspaces": ["packages/*"]` to root "package.json".
+
+Your "./package.json" should look like this.
+
+```json
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
+```
+
+Apply these configurations by command `yarn` in root folder.
+
+```shell
+# run at root folder
+yarn
+```
+
+After execution, a new "node_modules" folder showed up in root, and all packages' "node_modules"'s disk usage and sub folder numbers are both significantly reduced. Whole repo's disk usage reduced from about 930 MB to 600 MB.
+
 ### TODO
 
