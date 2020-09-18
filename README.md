@@ -217,5 +217,59 @@ Now webpack HMR will get notified when "lib-template-tsdx"'s code changed (after
 
 It works like a charm!
 
+### Storybook
+
+> Storybook is an open source tool for developing UI components in isolation for React, Vue, Angular, and more. It makes building stunning UIs organized and efficient.
+
+Tsdx has a template with storybook bundle. But it is one storybook per package. What if we want a big storybook covers all packages?
+
+Let do it.
+
+```shell
+# /my-mono-repo
+# init storybook
+npx sb init
+```
+
+Try `yarn storybook`.
+
+Now we are gonna migrate tsdx's settings to root.
+
+Your `.storybook/main.js` should look like this.
+
+```javascript
+module.exports = {
+  "stories": [ // Specify where to find stories.
+    "../packages/**/stories/**/*.stories.mdx", // MDX looks cool, keep it.
+    "../packages/**/stories/**/*.stories.@(ts|tsx)",
+  ],
+  "addons": [
+    "@storybook/addon-links",
+    "@storybook/addon-essentials", // The "addon-essentials" covers other addons which tsdx uses.
+    "@storybook/preset-create-react-app" // We may use storybook in cra?
+  ],
+  webpackFinal:  ... // Copied from "lib-template-tsdx-react-sb/.storybook/main.js".
+}
+```
+
+Tsdx's storybook config requires `ts-loader` and `react-docgen-typescript-loader`, install them.
+
+```shell
+# /my-mono-repo
+yarn add -WD ts-loader react-docgen-typescript-loader
+```
+
+Try `yarn storybook`. You'll see root storybook finds the story in packages.
+
+Since root storybook covers all, it's time to do some cleanup.
+
+```shell
+# /my-mono-repo
+rm -rf stories
+rm -rf packages/**/.storybook
+```
+
+And cleanup packages' package.json (two storybook scripts and all dependencies related to storybook only).
+
 ### TODO
 
