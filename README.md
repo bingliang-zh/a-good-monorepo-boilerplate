@@ -4,13 +4,33 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Storybook](https://cdn.jsdelivr.net/gh/storybookjs/brand@master/badge/badge-storybook.svg)](https://github.com/storybookjs/storybook)
 
-A monorepo boilerplate with a good workflow, featuring [typescript](https://github.com/microsoft/TypeScript), [lerna](https://github.com/lerna/lerna), [yarn workspace](https://classic.yarnpkg.com/en/docs/workspaces/), [create-react-app](https://github.com/facebook/create-react-app), [tsdx](https://github.com/formium/tsdx), [eslint](https://github.com/eslint/eslint), [prettier](https://github.com/prettier/prettier), [storybook](https://github.com/storybookjs/storybook), etc.
+A monorepo boilerplate with a good workflow, featuring [typescript](https://github.com/microsoft/TypeScript), [react](https://github.com/facebook/react), [lerna](https://github.com/lerna/lerna), [yarn workspace](https://classic.yarnpkg.com/en/docs/workspaces/), [create-react-app](https://github.com/facebook/create-react-app), [tsdx](https://github.com/formium/tsdx), [eslint](https://github.com/eslint/eslint), [prettier](https://github.com/prettier/prettier), [storybook](https://github.com/storybookjs/storybook), etc.
+
+## Concept
+
+Keep a clear workflow. Focus on creating reusable and robust codes. Minimalize maintenance. Use best practices.
+
+Some best practices:
+
+- Use webpack for apps, and Rollup for libraries.
+
+Frontend tools have functionality overlaps, which causes chaos. So its preferred to leave specific functionality to and only to a specific tool.
+
+- Language: [typescript](https://github.com/microsoft/TypeScript)
+- Framework: [react](https://github.com/facebook/react)
+- Module Publishing: [lerna](https://github.com/lerna/lerna)
+- Application Development: [yarn workspace](https://classic.yarnpkg.com/en/docs/workspaces/)
+- Library (Component) Development: [storybook](https://github.com/storybookjs/storybook), [yarn workspace](https://classic.yarnpkg.com/en/docs/workspaces/)
+- Application template: [create-react-app](https://github.com/facebook/create-react-app)
+- Library template: [tsdx](https://github.com/formium/tsdx)
+- Lint: [eslint](https://github.com/eslint/eslint)
+- Format: [prettier](https://github.com/prettier/prettier)
 
 ## Build Process
 
-This chapter describes how you can manually build a monorepo like this. You can review the git commit log for more details too. 
+This chapter describes how you can manually build a monorepo like this. You can look the git commit log for more details. 
 
-I'm using yarn@1.22.5, typescript (no javascript here).
+I'm using yarn@1.22.5, typescript (no javascript here) and react.
 
 ### Lerna
 
@@ -20,11 +40,11 @@ cd my-mono-repo
 npx lerna init
 ```
 
-Lerna's default mode 'Fixed/Locked mode' seems good to me. More custom settings, go to [here](https://github.com/lerna/lerna#getting-started).
+Lerna's default mode 'Fixed/Locked mode' seems good to me. If you want customize lerna, visit [this](https://github.com/lerna/lerna#getting-started).
 
 ### CRA (Create-React-App) & TSDX
 
-To see the differences yarn workspace made, I'll set up cra and tsdx ahead of yarn workspace.
+To see the differences yarn workspace made, I'll set up cra and tsdx ahead of yarn workspace. You can add more packages with yarn workspace enabled.
 
 ```shell
 # CRA (Create-React-App)
@@ -34,7 +54,7 @@ cd app-template-cra
 yarn start
 ```
 
-If nothing went wrong, you'll see a React App page. Try `yarn test` to see whether test is working.
+If nothing failed, you'll see a React App page. Try `yarn test` to check testing functionality.
 
 ```shell
 # TSDX with template "basic"
@@ -52,15 +72,15 @@ cd lib-template-tsdx-react-sb
 yarn start
 ```
 
-Tsdx offers three templates: basic, react, react-with-storybook. "Basic" is good for utility libraries, "react" & "react-with-storybook" is good for component libraries. You can skip the `--template` flag and select later.
+Tsdx offers three templates: basic, react and react-with-storybook. "Basic" is good for utility libraries, "react" & "react-with-storybook" is good for component libraries. You can skip the `--template` flag and choose one when initializing.
 
-After installation succeed, try `yarn start`, `yarn test`, `yarn storybook`(react-with-storybook only) in these packages.
+After installation succeed, try `yarn start`, `yarn test` and `yarn storybook`(react-with-storybook only) in these packages.
 
-### yarn workspace
+### Yarn Workspace
 
-You can see in chapter "CRA (Create-React-App) & TSDX", all dependencies each package need are installed locally in ./packages/package-name/node_modules. And they just don't know the siblings exist (I mean they cannot refer to each other, for now).
+You can see in chapter "CRA (Create-React-App) & TSDX", all dependencies each package need are installed locally in `./packages/package-name/node_modules`. And they just don't know the siblings exist (I mean they cannot refer to each other, for now).
 
-Here comes the "yarn workspace". It will significantly improve the development workflow by doing some "magic".
+We will save lerna for publishing and other high-level jobs, leave the simple "link" step to yarn workspaces which is the [low-level primitive](https://classic.yarnpkg.com/en/docs/workspaces/#how-does-it-compare-to-lerna-). It will significantly improve the development workflow by doing some "magic". 
 
 Add `"npmClient": "yarn"` and `"useWorkspaces": true` to "lerna.json".
 
@@ -97,13 +117,13 @@ Your "./package.json" should look like this.
 Apply these configurations by command `yarn` in root folder.
 
 ```shell
-# run at root folder
+# /my-mono-repo
 yarn
 ```
 
 After execution, a new "node_modules" folder showed up in root, and all packages' "node_modules"'s disk usage and sub folder numbers are both significantly reduced. Whole repo's disk usage reduced from about 930 MB to 600 MB.
 
-### yarn workspace cleanup & workflow
+### Yarn workspace cleanup & workflow
 
 Yarn workspace uses single root "yarn.lock" file. So remove all "yarn.lock" in packages.
 
@@ -123,13 +143,13 @@ node_modules
 */**/yarn.lock
 ```
 
-Now it's **Monorepo Workflow Demonstration** time.
+Now it's time for **Workflow Demonstration**.
 
-If you wanna do something to a package, for example 'lib-template-tsdx'. There are two ways with similar behavior.
+If you want to execute a package's script, for example 'lib-template-tsdx'. There are two ways.
 
 ```shell
 # workspace way
-# current directory at repo's root
+# /my-mono-repo
 yarn workspace lib-template-tsdx start
 ```
 
@@ -151,7 +171,9 @@ yarn workspace app-template-cra add lib-template-tsdx@0.1.0
 yarn workspace app-template-cra add lib-template-tsdx
 ```
 
-After local dependency installed correctly, use "lib-template-tsdx" method in "app-template-cra" by editing "app-template-cra/src/App.tsx".
+More details at this [issue](https://github.com/yarnpkg/yarn/issues/4878).
+
+After local dependency installed, use "lib-template-tsdx"'s method in "app-template-cra" by editing "app-template-cra/src/App.tsx".
 
 It should look like this.
 
