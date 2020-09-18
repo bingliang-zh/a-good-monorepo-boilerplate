@@ -1,14 +1,7 @@
 module.exports = {
-  "stories": [
-    "../packages/**/stories/**/*.stories.mdx",
-    "../packages/**/stories/**/*.stories.@(js|jsx|ts|tsx)",
-  ],
-  "addons": [
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/preset-create-react-app"
-  ],
-  webpackFinal: async (config) => {
+  stories: ['../packages/**/stories/**/*.stories.mdx', '../packages/**/stories/**/*.stories.@(js|jsx|ts|tsx)'],
+  addons: ['@storybook/addon-links', '@storybook/addon-essentials', '@storybook/preset-create-react-app'],
+  webpackFinal: async config => {
     config.module.rules.push({
       test: /\.(ts|tsx)$/,
       use: [
@@ -28,4 +21,4 @@ module.exports = {
 
     return config;
   },
-}
+};

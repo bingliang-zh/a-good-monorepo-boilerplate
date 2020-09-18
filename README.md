@@ -28,13 +28,13 @@ Frontend tools have functionality overlaps, which causes chaos. So its preferred
 
 ## Build Process
 
-This chapter describes how you can manually build a monorepo like this. You can look the git commit log for more details. 
+This chapter describes how you can manually build a monorepo like this. You can look the git commit log for more details.
 
 I'm using yarn@1.22.5, typescript (no javascript here) and react.
 
 ### Lerna
 
-```shell
+```bash
 mkdir my-mono-repo
 cd my-mono-repo
 npx lerna init
@@ -46,7 +46,7 @@ Lerna's default mode 'Fixed/Locked mode' seems good to me. If you want customize
 
 To see the differences yarn workspace made, I'll set up cra and tsdx ahead of yarn workspace. You can add more packages with yarn workspace enabled.
 
-```shell
+```bash
 # CRA (Create-React-App)
 cd packages
 npx create-react-app app-template-cra --template typescript
@@ -56,7 +56,7 @@ yarn start
 
 If nothing failed, you'll see a React App page. Try `yarn test` to check testing functionality.
 
-```shell
+```bash
 # TSDX with template "basic"
 cd packages
 npx tsdx create lib-template-tsdx --template basic
@@ -64,7 +64,7 @@ cd lib-template-tsdx
 yarn start
 ```
 
-```shell
+```bash
 # TSDX with template "react-with-storybook"
 cd packages
 npx tsdx create lib-template-tsdx-react-sb --template react-with-storybook
@@ -80,7 +80,7 @@ After installation succeed, try `yarn start`, `yarn test` and `yarn storybook`(r
 
 You can see in chapter "CRA (Create-React-App) & TSDX", all dependencies each package need are installed locally in `./packages/package-name/node_modules`. And they just don't know the siblings exist (I mean they cannot refer to each other, for now).
 
-We will save lerna for publishing and other high-level jobs, leave the simple "link" step to yarn workspaces which is the [low-level primitive](https://classic.yarnpkg.com/en/docs/workspaces/#how-does-it-compare-to-lerna-). It will significantly improve the development workflow by doing some "magic". 
+We will save lerna for publishing and other high-level jobs, leave the simple "link" step to yarn workspaces which is the [low-level primitive](https://classic.yarnpkg.com/en/docs/workspaces/#how-does-it-compare-to-lerna-). It will significantly improve the development workflow by doing some "magic".
 
 Add `"npmClient": "yarn"` and `"useWorkspaces": true` to "lerna.json".
 
@@ -88,9 +88,7 @@ Your "./lerna.json" should look like this.
 
 ```json
 {
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "version": "0.0.0",
   "npmClient": "yarn",
   "useWorkspaces": true
@@ -108,15 +106,13 @@ Your "./package.json" should look like this.
   "devDependencies": {
     "lerna": "^3.22.1"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": ["packages/*"]
 }
 ```
 
 Apply these configurations by command `yarn` in root folder.
 
-```shell
+```bash
 # /my-mono-repo
 yarn
 ```
@@ -127,7 +123,7 @@ After execution, a new "node_modules" folder showed up in root, and all packages
 
 Yarn workspace uses single root "yarn.lock" file. So remove all "yarn.lock" in packages.
 
-```shell
+```bash
 # remove all "yarn.lock" in packages
 rm packages/**/yarn.lock
 ```
@@ -147,13 +143,13 @@ Now it's time for **Workflow Demonstration**.
 
 If you want to execute a package's script, for example 'lib-template-tsdx'. There are two ways.
 
-```shell
+```bash
 # workspace way
 # /my-mono-repo
 yarn workspace lib-template-tsdx start
 ```
 
-```shell
+```bash
 # traditional way
 cd packages/lib-template-tsdx
 yarn start
@@ -161,12 +157,12 @@ yarn start
 
 Now I want to use "lib-template-tsdx" in "app-template-cra".
 
-```shell
+```bash
 # ✅ Current version of lib-template-tsdx is 0.1.0, use that.
 yarn workspace app-template-cra add lib-template-tsdx@0.1.0
 ```
 
-```shell
+```bash
 # ❌ It will throw an error if no version specified.
 yarn workspace app-template-cra add lib-template-tsdx
 ```
@@ -180,20 +176,20 @@ It should look like this.
 ```tsx
 // ...
 // the import added
-import { sum } from "lib-template-tsdx";
+import { sum } from 'lib-template-tsdx';
 
 function App() {
   // the code added
   const result = sum(1, 3);
-  
-  return //...
+
+  return; //...
 }
 // ...
 ```
 
 Run "app-template-cra".
 
-```shell
+```bash
 yarn workspace app-template-cra start
 ```
 
@@ -203,12 +199,12 @@ But changing code in "lib-template-tsdx" won't update the running tab, webpack H
 
 We will need two terminals to make HMR working.
 
-```shell
+```bash
 # terminal one
 yarn workspace lib-template-tsdx start
 ```
 
-```shell
+```bash
 # terminal two
 yarn workspace app-template-cra start
 ```
@@ -225,7 +221,7 @@ Tsdx has a template with storybook bundle. But it is one storybook per package. 
 
 Let do it.
 
-```shell
+```bash
 # /my-mono-repo
 # init storybook
 npx sb init
@@ -254,7 +250,7 @@ module.exports = {
 
 Tsdx's storybook config requires `ts-loader` and `react-docgen-typescript-loader`, install them.
 
-```shell
+```bash
 # /my-mono-repo
 yarn add -WD ts-loader react-docgen-typescript-loader
 ```
@@ -263,7 +259,7 @@ Try `yarn storybook`. You'll see root storybook finds the story in packages.
 
 Since root storybook covers all, it's time to do some cleanup.
 
-```shell
+```bash
 # /my-mono-repo
 rm -rf stories
 rm -rf packages/**/.storybook
@@ -275,7 +271,7 @@ And cleanup packages' package.json (two storybook scripts and all dependencies r
 
 Create-react-app and tsdx all have build-in test command. But CRA's test command by default won't exit after execution. We will ask lerna ci for help. But first install cross-env to use this script in all platforms.
 
-```shell
+```bash
 yarn add -WD cross-env
 ```
 
@@ -293,5 +289,55 @@ Add a new script in root package.json.
 
 Try `yarn test`. Don't forget to add "coverage" to .gitignore.
 
-### TODO
+### Lint & Format
 
+Eslint and prettier are good friends to rely on, especially when doing teamwork.
+
+They have many functionality overlapped, so I'll use eslint for lint only, leave format to prettier.
+
+#### Prettier - standalone
+
+Install prettier.
+
+```bash
+# install as dependency
+yarn add -WD prettier
+```
+
+Create your own `.prettierrc.yaml`.
+
+Here is my config.
+
+```yaml
+arrowParens: 'avoid'
+bracketSpacing: true
+jsxSingleQuote: false
+printWidth: 120
+semi: true
+singleQuote: true
+tabWidth: 2
+trailingComma: 'all'
+overrides:
+  - files:
+      - '*.tsx'
+      - '*.ts'
+    options:
+      tabWidth: 4
+```
+
+Add new script to root package.json.
+
+```json
+{
+  ...
+  "scripts": {
+    ...
+    "format": "prettier --config ./.prettierrc.yaml --ignore-path ./.gitignore --write ."
+  },
+  ...
+}
+```
+
+Try `yarn format`, it will format all files don't fit the root .gitignore file's rules.
+
+### TODO

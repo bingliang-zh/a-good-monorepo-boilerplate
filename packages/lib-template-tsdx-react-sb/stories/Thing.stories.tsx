@@ -2,7 +2,7 @@ import React from 'react';
 import { Thing, Props } from '../src';
 
 export default {
-  title: 'Welcome',
+    title: 'Welcome',
 };
 
 // By passing optional props to this story, you can control the props of the component when
