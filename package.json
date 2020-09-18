@@ -10,6 +10,7 @@
     "@storybook/preset-create-react-app": "^3.1.4",
     "@storybook/react": "^6.0.21",
     "babel-loader": "^8.1.0",
+    "cross-env": "^7.0.2",
     "lerna": "^3.22.1",
     "react-docgen-typescript-loader": "^3.7.2",
     "react-is": "^16.13.1",
@@ -20,6 +21,7 @@
   ],
   "dependencies": {},
   "scripts": {
+    "test": "cross-env CI=true FORCE_COLOR=true lerna run test -- --coverage",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   }

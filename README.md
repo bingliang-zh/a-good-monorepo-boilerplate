@@ -271,5 +271,27 @@ rm -rf packages/**/.storybook
 
 And cleanup packages' package.json (two storybook scripts and all dependencies related to storybook only).
 
+### Test
+
+Create-react-app and tsdx all have build-in test command. But CRA's test command by default won't exit after execution. We will ask lerna ci for help. But first install cross-env to use this script in all platforms.
+
+```shell
+yarn add -WD cross-env
+```
+
+Add a new script in root package.json.
+
+```json
+{
+  ...
+  "scripts": {
+    "test": "cross-env CI=true FORCE_COLOR=true lerna run test -- --coverage",
+    ...
+  }
+}
+```
+
+Try `yarn test`. Don't forget to add "coverage" to .gitignore.
+
 ### TODO
 

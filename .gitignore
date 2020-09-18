@@ -1,3 +1,5 @@
+coverage
+
 node_modules
 
 # yarn workspace only need root yarn.lock, ignore all yarn.lock(s) in subfolders
