@@ -406,4 +406,55 @@ Here is package `tsconfig.json` looks like.
 
 Try `yarn test`.
 
+#### Add Eslint Configurations
+
+Eslint has a different approach of [configuration in hierarchy](https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy). And I want apply different rules to apps and libs. So packages hierarchy needs modification.
+
+```bash
+cd packages
+mkdir apps # move all apps here, like "app-templat-cra"
+mkdir libs # move all libraries here, like "lib-template-tsdx"
+```
+
+Modify root `package.json` and `lerna.json`.
+
+```diff
+# package.json
+{
+  ...
+  "workspaces": [
+-    "packages/*"
++    "packages/apps/*", "packages/libs/*"
+  ],
+  ...
+}
+```
+
+```diff
+# lerna.json
+{
+  ...
+-  "packages": ["packages/*"],
++  "packages": ["packages/apps/*", "packages/libs/*"],
+  ...
+}
+```
+
+Execute `yarn` to apply changes.
+
+Try `yarn test`, you'll find some errors caused by hierarchy changes: "error TS5058: The specified path does not exist".
+
+Now apply the hierarchy changes to all packages' `tsconfig.json`.
+
+```diff
+{
+  ...
+-  "extends": "../../tsconfig.json",
++  "extends": "../../../tsconfig.json",
+  ...
+}
+```
+
+Try `yarn test`, it should be working.
+
 ### TODO

@@ -18,7 +18,8 @@
     "ts-loader": "^8.0.3"
   },
   "workspaces": [
-    "packages/*"
+    "packages/apps/*",
+    "packages/libs/*"
   ],
   "dependencies": {},
   "scripts": {
