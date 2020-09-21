@@ -1,0 +1,11 @@
+**/node_modules/**
+**/dist/**
+**/storybook-static/**
+**/coverage/**
+**/build/**
+**/.git/**
+**/public/**
+*.js
+*.stories.*
+serviceWorker.ts
+setupTests.ts

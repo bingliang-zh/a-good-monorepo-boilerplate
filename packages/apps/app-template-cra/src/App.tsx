@@ -1,9 +1,11 @@
-import React from 'react';
-import logo from './logo.svg';
-import { sum } from 'lib-template-tsdx';
 import './App.css';
 
-function App() {
+import React from 'react';
+import { sum } from 'lib-template-tsdx';
+
+import logo from './logo.svg';
+
+function App(): JSX.Element {
     const result = sum(1, 3);
     return (
         <div className="App">
@@ -15,6 +17,7 @@ function App() {
                 <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
                     Learn React
                 </a>
+                Sum: {result}
             </header>
         </div>
     );

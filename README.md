@@ -378,7 +378,7 @@ Here is package `tsconfig.json` looks like.
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["src"]
 }
@@ -398,7 +398,7 @@ Here is package `tsconfig.json` looks like.
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "types"]
 }
@@ -456,5 +456,89 @@ Now apply the hierarchy changes to all packages' `tsconfig.json`.
 ```
 
 Try `yarn test`, it should be working.
+
+Now it's time to add actual eslint configurations.
+
+Eslint rules is something like a personal preference, here I am gonna use airbnb and some popular rules such as `eslint-comments`, `react`, `react-hooks`, `jest`, `promise`, `unicorn`, `react-perf`, `simple-import-sort` and `prettier` with my customized additional rules (based on [iamturns/create-exposed-app](https://github.com/iamturns/create-exposed-app)). `prettier` plugins here is to disable built-in rules from other lint plugins that trying to do some formatting.
+
+Add dependencies.
+
+```bash
+yarn add -WD \
+eslint-config-airbnb-typescript \
+eslint-config-prettier \
+eslint-plugin-eslint-comments \
+eslint-plugin-import \
+eslint-plugin-jsx-a11y \
+eslint-plugin-prettier \
+eslint-plugin-promise \
+eslint-plugin-react \
+eslint-plugin-react-hooks \
+eslint-plugin-react-perf \
+eslint-plugin-simple-import-sort \
+eslint-plugin-unicorn \
+@typescript-eslint/eslint-plugin
+```
+
+Create root `.eslintrc.js` and `.eslintignore`. See this repo's related files for reference.
+
+Add lint script to root `package.json`. This script will lint all files altogether. We will use these root lint commands other than packages'. Git hooks also reuse these root lint commands.
+
+```diff
+# package.json
+{
+  ...
+  "scripts": {
++    "lint": "eslint ./packages/**/*.{ts,tsx} --max-warnings=0 --format=stylish",
++    "lint:fix": "eslint ./packages/**/*.{ts,tsx} --fix",
+    ...
+  }
+}
+```
+
+Remove cra created `package.json`'s eslintConfig section.
+
+```diff
+# packages/app/*/package.json
+{
+  ...
+-  "eslintConfig": {
+-    "extends": "react-app"
+-  },
+  ...
+}
+```
+
+Add customized `.eslintrc.js` to folder `apps` and `libs`, to apply special rules.
+
+```javascript
+// packages/apps/.eslintrc.js
+module.exports = {
+  // Default export component is commonly used even in cra's template.
+  rules: {
+    'import/no-default-export': 'off',
+  },
+};
+```
+
+```javascript
+// packages/libs/.eslintrc.js
+module.exports = {
+  rules: {
+    // Component should be pure react without any state manager.
+    // Large libraries such as lodash is not recommended.
+    // If it is necessary, tsdx made a tutorial on its [homepage](https://github.com/formium/tsdx#using-lodash), follow the guide.
+    'no-restricted-imports': [
+      'error',
+      {
+        paths: ['redux', 'mobx', 'lodash'],
+        patterns: ['lodash*'],
+      },
+    ],
+  },
+};
+```
+
+Try `yarn format` and `yarn lint`. Fix all the errors and warnings because we'll bundle git hook the next chapter.
 
 ### TODO
