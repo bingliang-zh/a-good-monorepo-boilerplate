@@ -295,7 +295,7 @@ Eslint and prettier are good friends to rely on, especially when doing teamwork.
 
 They have many functionality overlapped, so I'll use eslint for lint only, leave format to prettier.
 
-#### Prettier - standalone
+### Prettier Standalone
 
 Install prettier.
 
@@ -339,5 +339,71 @@ Add new script to root package.json.
 ```
 
 Try `yarn format`, it will format all files don't fit the root .gitignore file's rules.
+
+### Eslint
+
+#### Manage `tsconfig.json`s
+
+Eslint uses `tsconfig.json`, cra and tsdx produces a default for each package, and we'll use lerna to run lint one by one, so it is good already. Learn more at [typescript-eslint-MONOREPO](https://github.com/typescript-eslint/typescript-eslint/blob/master/docs/getting-started/linting/MONOREPO.md). But it is more organized with a root `tsconfig.json` and extend it in each package.
+
+We are gonna extract a common `tsconfig.json` as root, and extend from that to make packages' `tsconfig.json` cleaner.
+
+Here is root `tsconfig.json` looks like.
+
+```json
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "esModuleInterop": true,
+    "strict": true
+  }
+}
+```
+
+Here is package `tsconfig.json` looks like.
+
+- cra packages
+
+```json
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+  },
+  "include": ["src"]
+}
+```
+
+- tsdx packages
+
+```json
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["dom", "esnext"],
+    "importHelpers": true,
+    "declaration": true,
+    "sourceMap": true,
+    "rootDir": "./src",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+  },
+  "include": ["src", "types"]
+}
+```
+
+Try `yarn test`.
 
 ### TODO
