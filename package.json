@@ -43,7 +43,7 @@
     "lint": "eslint ./packages/**/*.{ts,tsx} --max-warnings=0 --format=stylish",
     "lint:fix": "eslint ./packages/**/*.{ts,tsx} --fix",
     "test": "cross-env CI=true FORCE_COLOR=true lerna run test -- --coverage",
-    "test:staged": "yarn test --changedSince master",
+    "test:lite": "yarn test --changedSince master",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "format": "prettier --config ./.prettierrc.yaml --ignore-path ./.gitignore --write ."
@@ -51,7 +51,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged && yarn test:staged"
+      "pre-commit": "lint-staged && yarn test:lite"
     }
   },
   "lint-staged": {

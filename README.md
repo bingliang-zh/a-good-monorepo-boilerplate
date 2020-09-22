@@ -277,11 +277,11 @@ yarn add -WD cross-env
 
 Add a new script in root package.json.
 
-```json
+```diff
 {
   ...
   "scripts": {
-    "test": "cross-env CI=true FORCE_COLOR=true lerna run test -- --coverage",
++    "test": "cross-env CI=true FORCE_COLOR=true lerna run test -- --coverage",
     ...
   }
 }
@@ -327,12 +327,12 @@ overrides:
 
 Add new script to root package.json.
 
-```json
+```diff
 {
   ...
   "scripts": {
     ...
-    "format": "prettier --config ./.prettierrc.yaml --ignore-path ./.gitignore --write ."
++    "format": "prettier --config ./.prettierrc.yaml --ignore-path ./.gitignore --write ."
   },
   ...
 }
@@ -557,29 +557,33 @@ Change root `package.json` a lot.
   ...
   "scripts": {
     ...
-    "test:staged": "yarn test --changedSince master",
++    "test:lite": "yarn test --changedSince master",
     ...
   },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
-      "pre-commit": "lint-staged && yarn test:staged"
-    }
-  },
-  "lint-staged": {
-    "**/*.{ts,tsx}": [
-      "eslint --color --max-warnings=0 --fix"
-    ],
-    "**/*": "prettier --write --ignore-unknown"
-  },
-  "commitlint": {
-    "extends": [
-      "@commitlint/config-conventional"
-    ]
-  }
++  "husky": {
++    "hooks": {
++      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
++      "pre-commit": "lint-staged && yarn test:lite"
++    }
++  },
++  "lint-staged": {
++    "**/*.{ts,tsx}": [
++      "eslint --color --max-warnings=0 --fix"
++    ],
++    "**/*": "prettier --write --ignore-unknown"
++  },
++  "commitlint": {
++    "extends": [
++      "@commitlint/config-conventional"
++    ]
++  }
 }
 ```
 
 While committing, `pre-commit` hook will be dispatched first, it will lint all typescript files (in git stage) with auto-fix and use prettier to format all supported files(in git stage), then try do auto testing with file changed since master. If all goes well, `commit-msg` hook will be dispatched, it will check the git commit message's format.
 
 > `--changedSince` only works with git and hg, this step does a small group of testing other than full cycle to reduce time consumption when committing. But if you need a full coverage check, you'll have to do a full cycle test.
+
+### Publishing
+
+TODO
