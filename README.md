@@ -541,4 +541,45 @@ module.exports = {
 
 Try `yarn format` and `yarn lint`. Fix all the errors and warnings because we'll bundle git hook the next chapter.
 
-### TODO
+### Work with Git Hooks
+
+First install related develop dependencies.
+
+```bash
+yarn add -WD husky lint-staged @commitlint/cli @commitlint/config-conventional
+```
+
+Change root `package.json` a lot.
+
+```diff
+# package.json
+{
+  ...
+  "scripts": {
+    ...
+    "test:staged": "yarn test --changedSince master",
+    ...
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged && yarn test:staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "eslint --color --max-warnings=0 --fix"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}
+```
+
+While committing, `pre-commit` hook will be dispatched first, it will lint all typescript files (in git stage) with auto-fix and use prettier to format all supported files(in git stage), then try do auto testing with file changed since master. If all goes well, `commit-msg` hook will be dispatched, it will check the git commit message's format.
+
+> `--changedSince` only works with git and hg, this step does a small group of testing other than full cycle to reduce time consumption when committing. But if you need a full coverage check, you'll have to do a full cycle test.

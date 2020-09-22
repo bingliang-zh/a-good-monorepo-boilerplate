@@ -3,6 +3,8 @@
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.11.6",
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
     "@storybook/addon-actions": "^6.0.21",
     "@storybook/addon-essentials": "^6.0.21",
     "@storybook/addon-links": "^6.0.21",
@@ -24,7 +26,9 @@
     "eslint-plugin-react-perf": "^3.2.4",
     "eslint-plugin-simple-import-sort": "^5.0.3",
     "eslint-plugin-unicorn": "^22.0.0",
+    "husky": "^4.3.0",
     "lerna": "^3.22.1",
+    "lint-staged": "^10.4.0",
     "prettier": "^2.1.2",
     "react-docgen-typescript-loader": "^3.7.2",
     "react-is": "^16.13.1",
@@ -39,8 +43,26 @@
     "lint": "eslint ./packages/**/*.{ts,tsx} --max-warnings=0 --format=stylish",
     "lint:fix": "eslint ./packages/**/*.{ts,tsx} --fix",
     "test": "cross-env CI=true FORCE_COLOR=true lerna run test -- --coverage",
+    "test:staged": "yarn test --changedSince master",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "format": "prettier --config ./.prettierrc.yaml --ignore-path ./.gitignore --write ."
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "lint-staged && yarn test:staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "eslint --color --max-warnings=0 --fix"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }
