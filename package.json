@@ -46,7 +46,9 @@
     "test:lite": "yarn test --changedSince master",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "format": "prettier --config ./.prettierrc.yaml --ignore-path ./.gitignore --write ."
+    "format": "prettier --config ./.prettierrc.yaml --ignore-path ./.gitignore --write .",
+    "prepare-packages": "lerna run prepare",
+    "clean": "git clean -xdf"
   },
   "husky": {
     "hooks": {

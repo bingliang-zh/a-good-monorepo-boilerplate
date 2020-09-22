@@ -26,6 +26,16 @@ Frontend tools have functionality overlaps, which causes chaos. So its preferred
 - Lint: [eslint](https://github.com/eslint/eslint)
 - Format: [prettier](https://github.com/prettier/prettier)
 
+## Usage
+
+```bash
+git clone https://github.com/bingliang-zh/a-good-monorepo-boilerplate.git
+cd a-good-monorepo-boilerplate
+yarn
+yarn prepare-packages
+# try `yarn test`, `yarn lint`, `yarn storybook`, `yarn workspace app-template-cra start`
+```
+
 ## Build Process
 
 This chapter describes how you can manually build a monorepo like this. You can look the git commit log for more details.
